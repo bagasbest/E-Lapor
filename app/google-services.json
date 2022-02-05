@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "130304660324",
+    "project_id": "e-lapor-7b916",
+    "storage_bucket": "e-lapor-7b916.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:130304660324:android:7c40e11911db8e93136071",
+        "android_client_info": {
+          "package_name": "com.project.elapor"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "130304660324-c5vdhhq8himhacfnjb502tp17slqhdfs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCq7teVrHfRIGyGoJZKQs0REWGVK_Oq0Ho"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "130304660324-c5vdhhq8himhacfnjb502tp17slqhdfs.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

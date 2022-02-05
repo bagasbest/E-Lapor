@@ -20,7 +20,6 @@
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Pengaduan Terkirim"
         android:textColor="@color/white"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="@+id/view2"
@@ -32,7 +31,6 @@
         android:id="@+id/keterangan"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Daftar Pengaduan Terkirim\nKe Admin"
         android:textAlignment="center"
         android:textColor="@color/black"
         android:textSize="18sp"
@@ -44,7 +42,7 @@
 
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvPengaduanClient"
+        android:id="@+id/rvPengaduan"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -53,5 +51,45 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/keterangan"
         tools:listitem="@layout/item_pengaduan" />
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="wrap_content"
+        android:visibility="gone"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/rvPengaduan"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/keterangan" />
+
+    <TextView
+        android:id="@+id/noDataAdmin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Tidak Ada Pengaduan\nMasuk ke Anda"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:visibility="gone"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/rvPengaduan"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/rvPengaduan"
+        app:layout_constraintTop_toTopOf="@+id/rvPengaduan" />
+
+    <TextView
+        android:id="@+id/noDataUser"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Tidak Ada Pengaduan\nTerkirim ke Admin"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:visibility="gone"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/rvPengaduan"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/rvPengaduan"
+        app:layout_constraintTop_toTopOf="@+id/rvPengaduan" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
