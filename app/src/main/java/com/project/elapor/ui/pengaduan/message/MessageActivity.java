@@ -1,5 +1,7 @@
 package com.project.elapor.ui.pengaduan.message;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -13,11 +15,11 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
-
 import com.bumptech.glide.Glide;
 import com.github.dhaval2404.imagepicker.ImagePicker;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.project.elapor.R;
@@ -48,10 +50,13 @@ public class MessageActivity extends AppCompatActivity {
         model = getIntent().getParcelableExtra(EXTRA_DATA);
         role = getIntent().getStringExtra(ROLE);
         if (role.equals("user")) {
+            if(model.getStatus().equals("not finish")){
+                binding.finish.setVisibility(View.VISIBLE);
+            }
             Glide.with(this)
                     .load(model.getAdminImage())
                     .into(binding.image);
-            binding.name.setText(model.getAdminImage());
+            binding.name.setText(model.getAdminName());
         } else {
             Glide.with(this)
                     .load(model.getUserImage())
@@ -80,6 +85,34 @@ public class MessageActivity extends AppCompatActivity {
                     .compress(1024)
                     .start(REQUEST_IMAGE_FROM_GALLERY);
         });
+
+        binding.finish.setOnClickListener(view -> new AlertDialog.Builder(MessageActivity.this)
+                .setTitle("Konfirmasi Menyelesaikan Laporan")
+                .setMessage("Apakah anda yakin ingin menyelesaikan laporan ini ?")
+                .setIcon(R.drawable.ic_baseline_warning_24)
+                .setPositiveButton("YA", (dialogInterface, i) -> {
+                    dialogInterface.dismiss();
+                    finishReport();
+                })
+                .setNegativeButton("TIDAK", null)
+                .show());
+    }
+
+    private void finishReport() {
+        FirebaseFirestore
+                .getInstance()
+                .collection("report")
+                .document(model.getUid())
+                .update("status", "finish")
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if(task.isSuccessful()) {
+                            binding.finish.setVisibility(View.GONE);
+                            Toast.makeText(MessageActivity.this, "Laporan ini sukses diselesaikan!", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
     }
 
 
@@ -88,11 +121,12 @@ public class MessageActivity extends AppCompatActivity {
         SimpleDateFormat getDate = new SimpleDateFormat("dd MMM yyyy, HH:mm:ss");
         String format = getDate.format(new Date());
 
-        if(role.equals("user")){
-            MessageDatabase.sendChat(message, format, model.getUserUid()+model.getAdminUid(), model.getUserUid(), isText);
+        if(role.equals("user")) {
+            MessageDatabase.sendChat(message, format, model.getUid(), model.getUserUid(), isText);
         } else {
-            MessageDatabase.sendChat(message, format, model.getUserUid()+model.getAdminUid(), model.getAdminUid(), isText);
+            MessageDatabase.sendChat(message, format, model.getUid(), model.getAdminUid(), isText);
         }
+
         binding.messageEt.getText().clear();
         imageText = null;
 
@@ -104,7 +138,6 @@ public class MessageActivity extends AppCompatActivity {
     private void initRecyclerView() {
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        linearLayoutManager.setReverseLayout(true);
         linearLayoutManager.setStackFromEnd(true);
         binding.chatRv.setLayoutManager(linearLayoutManager);
 
@@ -121,7 +154,7 @@ public class MessageActivity extends AppCompatActivity {
 
         MessageViewModel viewModel = new ViewModelProvider(this).get(MessageViewModel.class);
 
-        viewModel.setListMessage(model.getUserUid(), model.getAdminUid());
+        viewModel.setListMessage(model.getUid());
         viewModel.getMessage().observe(this, messageList -> {
             if (messageList != null) {
                 adapter.setData(messageList);

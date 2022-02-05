@@ -17,6 +17,7 @@ public class PengaduanModel implements Parcelable {
     private String adminName;
     private String date;
     private String message;
+    private String status;
 
     public PengaduanModel(){}
 
@@ -32,6 +33,7 @@ public class PengaduanModel implements Parcelable {
         adminName = in.readString();
         date = in.readString();
         message = in.readString();
+        status = in.readString();
     }
 
     @Override
@@ -47,6 +49,7 @@ public class PengaduanModel implements Parcelable {
         dest.writeString(adminName);
         dest.writeString(date);
         dest.writeString(message);
+        dest.writeString(status);
     }
 
     @Override
@@ -152,5 +155,13 @@ public class PengaduanModel implements Parcelable {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

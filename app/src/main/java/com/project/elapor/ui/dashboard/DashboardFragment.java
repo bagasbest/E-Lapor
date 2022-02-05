@@ -18,14 +18,18 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.project.elapor.databinding.FragmentDashboardBinding;
+import com.project.elapor.ui.pengaduan.PengaduanAdapter;
+import com.project.elapor.ui.pengaduan.PengaduanViewModel;
 
 public class DashboardFragment extends Fragment {
 
     private FragmentDashboardBinding binding;
     private DashboardAdapter adapter;
+    private PengaduanAdapter pengaduanAdapter;
     private String role;
 
     private final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
@@ -40,32 +44,21 @@ public class DashboardFragment extends Fragment {
 
     private void initRecyclerView(String image, String name, String unit) {
         binding.rvAdmin.setLayoutManager(new LinearLayoutManager(getActivity()));
-        adapter = new DashboardAdapter(user.getUid(), image, name, unit, role);
+        adapter = new DashboardAdapter(user.getUid(), image, name, unit);
         binding.rvAdmin.setAdapter(adapter);
     }
 
-    private void initViewModel(String role) {
+    private void initViewModel() {
         DashboardViewModel viewModel = new ViewModelProvider(this).get(DashboardViewModel.class);
         binding.progressBar.setVisibility(View.VISIBLE);
-        if(role.equals("user")) {
-            viewModel.setListDashboardAdmin();
-        } else {
-            viewModel.setListDashboardUser();
-        }
+        viewModel.setListDashboardAdmin();
+
         viewModel.getDashboard().observe(this, dashboardModelArrayList -> {
             if (dashboardModelArrayList.size() > 0) {
-                if(role.equals("user")) {
-                    binding.noDataUser.setVisibility(View.GONE);
-                } else {
-                    binding.noDataAdmin.setVisibility(View.GONE);
-                }
+                binding.noDataAdmin.setVisibility(View.GONE);
                 adapter.setData(dashboardModelArrayList);
             } else {
-                if(role.equals("user")) {
-                    binding.noDataUser.setVisibility(View.GONE);
-                } else {
-                    binding.noDataAdmin.setVisibility(View.GONE);
-                }
+                binding.noDataAdmin.setVisibility(View.VISIBLE);
             }
             binding.progressBar.setVisibility(View.GONE);
         });
@@ -87,14 +80,15 @@ public class DashboardFragment extends Fragment {
                         String unit = "" + documentSnapshot.get("unit");
                         role = "" + documentSnapshot.get("role");
 
-                        if(role.equals("user")) {
+                        if (role.equals("user")) {
                             binding.textView4.setVisibility(View.VISIBLE);
+                            initRecyclerView(image, name, unit);
+                            initViewModel();
                         } else {
                             binding.textView5.setVisibility(View.VISIBLE);
+                            initRecyclerViewAdminSide();
+                            initViewModelAdminSide();
                         }
-
-                        initRecyclerView(image, name, unit);
-                        initViewModel(role);
 
                         Glide.with(requireActivity())
                                 .load(image)
@@ -102,9 +96,31 @@ public class DashboardFragment extends Fragment {
 
                         binding.name.setText(name);
                         binding.nip.setText("NIP: " + nip);
-                        binding.unit.setText(unit);
+                        binding.unit.setText("Unit: " + unit);
+
                     }
                 });
+    }
+
+    private void initRecyclerViewAdminSide() {
+        binding.rvAdmin.setLayoutManager(new LinearLayoutManager(getActivity()));
+        pengaduanAdapter = new PengaduanAdapter("admin", "dashboard");
+        binding.rvAdmin.setAdapter(pengaduanAdapter);
+    }
+
+    private void initViewModelAdminSide() {
+        PengaduanViewModel viewModel = new ViewModelProvider(this).get(PengaduanViewModel.class);
+        binding.progressBar.setVisibility(View.VISIBLE);
+        viewModel.setListPengaduanAdminByUidComplete(user.getUid());
+        viewModel.getPengaduan().observe(this, pengaduanModelArrayList -> {
+            if (pengaduanModelArrayList.size() > 0) {
+                binding.noDataUser.setVisibility(View.GONE);
+                pengaduanAdapter.setData(pengaduanModelArrayList);
+            } else {
+                binding.noDataUser.setVisibility(View.VISIBLE);
+            }
+            binding.progressBar.setVisibility(View.GONE);
+        });
     }
 
     @Override

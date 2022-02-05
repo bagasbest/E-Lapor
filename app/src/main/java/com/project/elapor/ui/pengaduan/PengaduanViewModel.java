@@ -42,6 +42,7 @@ public class PengaduanViewModel extends ViewModel {
                                 model.setUserName("" + document.get("userName"));
                                 model.setUserUid("" + document.get("userUid"));
                                 model.setUserUnit("" + document.get("userUnit"));
+                                model.setStatus("" + document.get("status"));
 
 
                                 pengaduanModelArrayList.add(model);
@@ -81,6 +82,48 @@ public class PengaduanViewModel extends ViewModel {
                                 model.setUserName("" + document.get("userName"));
                                 model.setUserUid("" + document.get("userUid"));
                                 model.setUserUnit("" + document.get("userUnit"));
+                                model.setStatus("" + document.get("status"));
+
+
+                                pengaduanModelArrayList.add(model);
+                            }
+                            listPengaduan.postValue(pengaduanModelArrayList);
+                        } else {
+                            Log.e(TAG, task.toString());
+                        }
+                    });
+        } catch (Exception error) {
+            error.printStackTrace();
+        }
+    }
+
+    public void setListPengaduanAdminByUidComplete(String uid) {
+        pengaduanModelArrayList.clear();
+
+        try {
+            FirebaseFirestore
+                    .getInstance()
+                    .collection("report")
+                    .whereEqualTo("adminUid", uid)
+                    .whereEqualTo("status", "finish")
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if(task.isSuccessful()) {
+                            for(QueryDocumentSnapshot document : task.getResult()) {
+                                PengaduanModel model = new PengaduanModel();
+
+                                model.setUid("" + document.get("uid"));
+                                model.setAdminImage("" + document.get("adminImage"));
+                                model.setAdminUid("" + document.get("adminUid"));
+                                model.setAdminName("" + document.get("adminName"));
+                                model.setAdminUnit("" + document.get("adminUnit"));
+                                model.setDate("" + document.get("date"));
+                                model.setMessage("" + document.get("message"));
+                                model.setUserImage("" + document.get("userImage"));
+                                model.setUserName("" + document.get("userName"));
+                                model.setUserUid("" + document.get("userUid"));
+                                model.setUserUnit("" + document.get("userUnit"));
+                                model.setStatus("" + document.get("status"));
 
 
                                 pengaduanModelArrayList.add(model);

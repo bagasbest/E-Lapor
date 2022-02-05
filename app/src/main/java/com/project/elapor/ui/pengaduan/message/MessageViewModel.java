@@ -18,14 +18,14 @@ public class MessageViewModel extends ViewModel {
 
     private static final String TAG = MessageViewModel.class.getSimpleName();
 
-    public void setListMessage(String uid1, String uid2) {
+    public void setListMessage(String uid) {
         messageModelArrayList.clear();
 
         try {
             FirebaseFirestore
                     .getInstance()
                     .collection("report")
-                    .document(uid1+uid2)
+                    .document(uid)
                     .collection("message")
                     .get()
                     .addOnCompleteListener(task -> {

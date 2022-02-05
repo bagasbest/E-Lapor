@@ -21,16 +21,19 @@ public class PengaduanFragment extends Fragment {
 
     private FragmentPengaduanBinding binding;
     private PengaduanAdapter adapter;
-    private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+    private final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        checkRole();
+    }
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
 
         binding = FragmentPengaduanBinding.inflate(inflater, container, false);
-
-        checkRole();
-
         return binding.getRoot();
     }
 
@@ -63,7 +66,7 @@ public class PengaduanFragment extends Fragment {
 
     private void initRecyclerView(String role) {
         binding.rvPengaduan.setLayoutManager(new LinearLayoutManager(getActivity()));
-        adapter = new PengaduanAdapter(role);
+        adapter = new PengaduanAdapter(role, "");
         binding.rvPengaduan.setAdapter(adapter);
     }
 
@@ -85,9 +88,9 @@ public class PengaduanFragment extends Fragment {
                 adapter.setData(pengaduanModelArrayList);
             } else {
                 if(role.equals("user")) {
-                    binding.noDataUser.setVisibility(View.GONE);
+                    binding.noDataUser.setVisibility(View.VISIBLE);
                 } else {
-                    binding.noDataAdmin.setVisibility(View.GONE);
+                    binding.noDataAdmin.setVisibility(View.VISIBLE);
                 }
             }
             binding.progressBar.setVisibility(View.GONE);

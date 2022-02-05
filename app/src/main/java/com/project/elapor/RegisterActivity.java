@@ -45,7 +45,7 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
 
-        binding.registerAsAdmin.setOnClickListener(new View.OnClickListener() {
+        binding.registerAsUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 formValidation("user");
@@ -71,7 +71,7 @@ public class RegisterActivity extends AppCompatActivity {
     private void formValidation(String role) {
         String nip = binding.nip.getText().toString().trim();
         String email = binding.email.getText().toString().trim();
-        String password = binding.nip.getText().toString().trim();
+        String password = binding.password.getText().toString().trim();
         String unit = binding.unit.getText().toString().trim();
         String name = binding.name.getText().toString().trim();
 
@@ -198,7 +198,6 @@ public class RegisterActivity extends AppCompatActivity {
                                 .addOnSuccessListener(uri -> {
                                     mProgressDialog.dismiss();
                                     dp = uri.toString();
-                                    binding.imageHint.setVisibility(View.GONE);
                                     Glide
                                             .with(this)
                                             .load(dp)

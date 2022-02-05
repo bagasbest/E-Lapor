@@ -56,43 +56,6 @@ public class DashboardViewModel extends ViewModel {
         }
     }
 
-
-    public void setListDashboardUser() {
-        dashboardModelArrayList.clear();
-
-        try {
-            FirebaseFirestore
-                    .getInstance()
-                    .collection("users")
-                    .whereEqualTo("role", "user")
-                    .get()
-                    .addOnCompleteListener(task -> {
-                        if(task.isSuccessful()) {
-                            for(QueryDocumentSnapshot document : task.getResult()) {
-                                DashboardModel model = new DashboardModel();
-
-                                model.setEmail("" + document.get("email"));
-                                model.setImage("" + document.get("image"));
-                                model.setNip("" + document.get("nip"));
-                                model.setPassword("" + document.get("password"));
-                                model.setRole("" + document.get("role"));
-                                model.setUid("" + document.get("uid"));
-                                model.setUnit("" + document.get("unit"));
-                                model.setName("" + document.get("name"));
-
-                                dashboardModelArrayList.add(model);
-                            }
-                            listDashboard.postValue(dashboardModelArrayList);
-                        } else {
-                            Log.e(TAG, task.toString());
-                        }
-                    });
-        } catch (Exception error) {
-            error.printStackTrace();
-        }
-    }
-
-
     public LiveData<ArrayList<DashboardModel>> getDashboard() {
         return listDashboard;
     }

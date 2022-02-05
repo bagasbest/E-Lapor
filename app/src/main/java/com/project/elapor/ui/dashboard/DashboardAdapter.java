@@ -41,13 +41,12 @@ public class DashboardAdapter extends RecyclerView.Adapter<DashboardAdapter.View
         notifyDataSetChanged();
     }
 
-    public String myUid, myImage, myName, myUnit, myRole;
-    public DashboardAdapter(String myUid, String myImage, String myName, String myUnit, String myRole) {
+    public String myUid, myImage, myName, myUnit;
+    public DashboardAdapter(String myUid, String myImage, String myName, String myUnit) {
         this.myUid = myUid;
         this.myImage = myImage;
         this.myName = myName;
         this.myUnit = myUnit;
-        this.myRole = myRole;
     }
 
 
@@ -62,7 +61,7 @@ public class DashboardAdapter extends RecyclerView.Adapter<DashboardAdapter.View
 
     @Override
     public void onBindViewHolder(@NonNull @NotNull ViewHolder holder, int position) {
-        holder.bind(listUser.get(position), myRole, myUid, myImage, myName, myUnit);
+        holder.bind(listUser.get(position), myUid, myImage, myName, myUnit);
     }
 
     @Override
@@ -86,7 +85,7 @@ public class DashboardAdapter extends RecyclerView.Adapter<DashboardAdapter.View
         }
 
         @SuppressLint("SetTextI18n")
-        public void bind(DashboardModel model, String myRole, String myUid, String myImage, String myName, String myUnit) {
+        public void bind(DashboardModel model, String myUid, String myImage, String myName, String myUnit) {
             Glide.with(itemView.getContext())
                     .load(model.getImage())
                     .into(image);
@@ -95,6 +94,9 @@ public class DashboardAdapter extends RecyclerView.Adapter<DashboardAdapter.View
             unit.setText(model.getUnit());
 
             cl.setOnClickListener(view -> {
+
+                String uid = String.valueOf(System.currentTimeMillis());
+
                 ProgressDialog mProgressDialog = new ProgressDialog(itemView.getContext());
 
                 mProgressDialog.setMessage("Mohon tunggu hingga proses selesai...");
@@ -105,10 +107,8 @@ public class DashboardAdapter extends RecyclerView.Adapter<DashboardAdapter.View
                 String format = getDate.format(new Date());
 
 
-                if(myRole.equals("user")) {
-
                     Map<String, Object> data = new HashMap<>();
-                    data.put("uid", myUid+model.getUid());
+                    data.put("uid", uid);
                     data.put("userUid", myUid);
                     data.put("userImage", myImage);
                     data.put("userUnit", myUnit);
@@ -117,11 +117,12 @@ public class DashboardAdapter extends RecyclerView.Adapter<DashboardAdapter.View
                     data.put("adminImage", model.getImage());
                     data.put("adminUnit", model.getUnit());
                     data.put("adminName", model.getName());
+                    data.put("status", "not finish");
                     data.put("date", format);
                     data.put("message", "Silahkan ajukan laporan anda!");
 
                     PengaduanModel pengaduanModel = new PengaduanModel();
-                    pengaduanModel.setUid(myUid+model.getUid());
+                    pengaduanModel.setUid(uid);
                     pengaduanModel.setAdminImage(model.getImage());
                     pengaduanModel.setAdminName(model.getName());
                     pengaduanModel.setAdminUid(model.getUid());
@@ -130,12 +131,13 @@ public class DashboardAdapter extends RecyclerView.Adapter<DashboardAdapter.View
                     pengaduanModel.setUserName(myName);
                     pengaduanModel.setUserUnit(myUnit);
                     pengaduanModel.setUserImage(myImage);
+                    pengaduanModel.setStatus("not finish");
 
 
                     FirebaseFirestore
                             .getInstance()
                             .collection("report")
-                            .document(myUid+model.getUid())
+                            .document(uid)
                             .set(data)
                             .addOnCompleteListener(task -> {
                                 if (task.isSuccessful()) {
@@ -150,24 +152,6 @@ public class DashboardAdapter extends RecyclerView.Adapter<DashboardAdapter.View
                                     Log.e("Error Transaction", task.toString());
                                 }
                             });
-                } else {
-                    PengaduanModel pengaduanModel = new PengaduanModel();
-                    pengaduanModel.setUid(myUid+model.getUid());
-                    pengaduanModel.setAdminImage(myImage);
-                    pengaduanModel.setAdminName(myName);
-                    pengaduanModel.setAdminUid(myUid);
-                    pengaduanModel.setAdminUnit(myUnit);
-                    pengaduanModel.setUserUid(model.getUid());
-                    pengaduanModel.setUserName(model.getName());
-                    pengaduanModel.setUserUnit(model.getUnit());
-                    pengaduanModel.setUserImage(model.getImage());
-
-                    mProgressDialog.dismiss();
-                    Intent intent = new Intent(itemView.getContext(), MessageActivity.class);
-                    intent.putExtra(MessageActivity.EXTRA_DATA, pengaduanModel);
-                    intent.putExtra(MessageActivity.ROLE, "admin");
-                    itemView.getContext().startActivity(intent);
-                }
             });
 
         }
