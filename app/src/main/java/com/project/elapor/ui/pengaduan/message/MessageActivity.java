@@ -35,7 +35,7 @@ public class MessageActivity extends AppCompatActivity {
     public static final String ROLE = "role";
     private ActivityMessageBinding binding;
     private PengaduanModel model;
-
+    private static final int REQUEST_IMAGE_FROM_CAMERA = 1001;
     private static final int REQUEST_IMAGE_FROM_GALLERY = 1002;
     private String imageText;
     private MessageAdapter adapter;
@@ -80,10 +80,7 @@ public class MessageActivity extends AppCompatActivity {
 
         // KLIK BERKAS
         binding.attach.setOnClickListener(view -> {
-            ImagePicker.with(MessageActivity.this)
-                    .galleryOnly()
-                    .compress(1024)
-                    .start(REQUEST_IMAGE_FROM_GALLERY);
+            chooseCameraOrGallery();
         });
 
         binding.finish.setOnClickListener(view -> new AlertDialog.Builder(MessageActivity.this)
@@ -96,6 +93,31 @@ public class MessageActivity extends AppCompatActivity {
                 })
                 .setNegativeButton("TIDAK", null)
                 .show());
+    }
+
+    private void chooseCameraOrGallery() {
+        String[] options = {"Unggah Gambar Melalui Kamera", "Unggah Gambar Melalui Galeri"};
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Pilihan");
+        builder.setItems(options, (dialog, which) -> {
+            if (which == 0) {
+                // UNGGAH GAMBAR
+                dialog.dismiss();
+                ImagePicker.with(MessageActivity.this)
+                        .cameraOnly()
+                        .compress(1024)
+                        .start(REQUEST_IMAGE_FROM_CAMERA);
+            } else if (which == 1) {
+                // UNGGAH GAMBAR
+                dialog.dismiss();
+                ImagePicker.with(MessageActivity.this)
+                        .galleryOnly()
+                        .compress(1024)
+                        .start(REQUEST_IMAGE_FROM_GALLERY);
+            }
+        });
+        builder.create().show();
     }
 
     private void finishReport() {
@@ -168,7 +190,7 @@ public class MessageActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == REQUEST_IMAGE_FROM_GALLERY) {
+            if (requestCode == REQUEST_IMAGE_FROM_GALLERY || requestCode == REQUEST_IMAGE_FROM_CAMERA) {
                 uploadPicture(data.getData());
             }
         }
