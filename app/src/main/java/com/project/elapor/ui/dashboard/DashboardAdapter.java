@@ -90,8 +90,8 @@ public class DashboardAdapter extends RecyclerView.Adapter<DashboardAdapter.View
                     .load(model.getImage())
                     .into(image);
             name.setText(model.getName());
-            nip.setText(model.getNip());
-            unit.setText(model.getUnit());
+            nip.setText("NIP: " + model.getNip());
+            unit.setText("Unit: " + model.getUnit());
 
             cl.setOnClickListener(view -> {
 

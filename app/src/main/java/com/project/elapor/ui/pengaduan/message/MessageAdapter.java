@@ -1,16 +1,28 @@
 package com.project.elapor.ui.pengaduan.message;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
+import android.content.DialogInterface;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.project.elapor.R;
 
 import org.jetbrains.annotations.NotNull;
@@ -89,6 +101,24 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
                 Glide.with(itemView.getContext())
                         .load(model.getMessage())
                         .into(imageText);
+
+                imageText.setOnClickListener(view -> {
+                    Dialog dialog;
+                    ImageView imageView;
+                    dialog = new Dialog(itemView.getContext());
+
+                    dialog.setContentView(R.layout.popup_image);
+                    imageView = dialog.findViewById(R.id.image);
+
+                    Glide.with(itemView.getContext())
+                            .load(model.getMessage())
+                            .into(imageView);
+
+
+                    dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                    dialog.show();
+                });
+
             } else {
                 imageText.setVisibility(View.GONE);
                 message.setVisibility(View.VISIBLE);
